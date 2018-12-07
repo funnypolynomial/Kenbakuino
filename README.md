@@ -10,6 +10,8 @@ Additional photos of my build (2011) are [here](https://www.flickr.com/photos/fu
 
 Original links [here](http://www.funnypolynomial.com/software/arduino/kenbak.html "funnypolynomial.com").
 
+See **kenbakuino.txt** for detailed information about the sketch.  It attempts to accurately emulate the original, but with some extensions: read from an RTC, generate random numbers, load build-in programs, etc.
+
 There's also a [kit](https://www.adwaterandstir.com/kenbak/) which uses the sketch. 
 
 Schematic (taken from PINS.H)
