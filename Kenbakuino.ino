@@ -13,10 +13,9 @@
 //  Dec 2018: Corrected SDA/SCL pins, clarified that RTC is a DS1307 module/breakout (i.e. with XTAL)
 // ==================================================================
 
-// WTF.  We need to include these in the "main sketch" if we want to include them in "tabs"
+// WTF.  We need to include these in the "main sketch" if we want to include them in "tabs"?
 #include <Arduino.h>
 #include <Wire.h>
-#include <EEPROM.h>
 
 #include "PINS.h"
 #include "Config.h"

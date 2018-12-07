@@ -135,7 +135,7 @@ void CPU::ClearAllMemory()
   memset(m_Memory, 0, 256);
 }
 
-bool CPU::OnNOOPExtension(byte Op)
+bool CPU::OnNOOPExtension(byte )
 {
   // by default a NOOP does nothing (but says "keep running")
   // this can be over-written.  return false to HALT
