@@ -14,7 +14,7 @@ See **kenbakuino.txt** for detailed information about the sketch.  It attempts t
 
 **Note** if you download the **zip** from GitHub, after unzipping you will need to rename the "Kenbakuino-master" folder to just "Kenbakuino" since the IDE requires the folder to match the ino filename.
 
-There's also a [kit](https://www.adwaterandstir.com/kenbak/) which uses the sketch. 
+**You can now buy a [kit](https://www.adwaterandstir.com/kenbak/) which uses the sketch and more closely matches the look of the original.**
 
 Schematic (taken from PINS.H)
 ````
