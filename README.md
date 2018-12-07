@@ -12,6 +12,8 @@ Original links [here](http://www.funnypolynomial.com/software/arduino/kenbak.htm
 
 See **kenbakuino.txt** for detailed information about the sketch.  It attempts to accurately emulate the original, but with some extensions: read from an RTC, generate random numbers, load build-in programs, etc.
 
+**Note** if you download the **zip** from GitHub, after unzipping you will need to rename the "Kenbakuino-master" folder to just "Kenbakuino" since the IDE requires the folder to match the ino filename.
+
 There's also a [kit](https://www.adwaterandstir.com/kenbak/) which uses the sketch. 
 
 Schematic (taken from PINS.H)
