@@ -10,7 +10,7 @@ Additional photos of my build (2011) are [here](https://www.flickr.com/photos/fu
 
 Original links [here](http://www.funnypolynomial.com/software/arduino/kenbak.html "funnypolynomial.com").
 
-See **kenbakuino.txt** for detailed information about the sketch.  It attempts to accurately emulate the original, but with some extensions: read from an RTC, generate random numbers, load build-in programs, etc.
+See **kenbakuino.txt** for detailed information about the sketch.  It attempts to accurately emulate the original, but with some extensions: read from an RTC, generate random numbers, load built-in programs, etc.
 
 **Note** if you download the **zip** from GitHub, after unzipping you will need to rename the "Kenbakuino-master" folder to just "Kenbakuino" since the IDE requires the folder to match the ino filename.
 
