@@ -56,9 +56,8 @@ void Programs::AssembleSetRTC(byte* pMem)
   enum { SetTime, Hr, Min };
   for (m_iPass = 0; m_iPass < 2; m_iPass++)
   {
-    pc(0)
-      equ(0x14)  // hr
-      equ(0x00)  // min
+    // 0 is hr, 1 is min (BCD)
+    pc(2)
       equ(0000)
       equ(0004)
     def(SetTime)
