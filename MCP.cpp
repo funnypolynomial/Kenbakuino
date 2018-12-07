@@ -190,7 +190,7 @@ void MCP::HandleButtonHalted(word State, word Pressed)
   }
 }
 
-void MCP::HandleButtonRunning(word State, word Pressed)
+void MCP::HandleButtonRunning(word , word Pressed)
 {
   // button-press while we ARE running
   int Btn;
@@ -271,13 +271,13 @@ void MCP::OnInputClear(byte Chord)
   }
 }
 
-void MCP::OnAddressDisplay(byte Chord)
+void MCP::OnAddressDisplay(byte )
 {
   m_Data = m_Address;
   SetMode(eAddress);
 }
 
-void MCP::OnAddressSet(byte Chord)
+void MCP::OnAddressSet(byte )
 {
   m_Address = CPU::cpu->Read(REG_INPUT_IDX);
   Blink(eAddress);
@@ -285,7 +285,7 @@ void MCP::OnAddressSet(byte Chord)
 
 void MCP::OnMemoryRead(byte Chord)
 {
-  if (Buttons::eBit0 <= Chord && Chord <= Buttons::eBit7)
+  if (Chord <= Buttons::eBit7)
   {
     // Extension: BitN+Read read from EEPROM page N
     m_Data = memory.ReadMemoryFromEEPROMSlot(Chord)?bit(Chord):0;
@@ -313,7 +313,7 @@ void MCP::OnMemoryRead(byte Chord)
 
 void MCP::OnMemoryStore(byte Chord)
 {
-  if (Buttons::eBit0 <= Chord && Chord <= Buttons::eBit7)
+  if (Chord <= Buttons::eBit7)
   {
     // Extension: BitN+Store write to EEPROM page N
     m_Data = memory.WriteMemoryToEEPROMSlot(Chord)?bit(Chord):0;
@@ -366,7 +366,7 @@ void MCP::OnRunStart(byte Chord)
 
 void MCP::OnRunStop(byte Chord)
 {
-  if (Buttons::eBit0 <= Chord && Chord <= Buttons::eBit7)
+  if (Chord <= Buttons::eBit7)
   {
     // Extension: BitN+Stop set CPU speed to N
     config.SetCPUSpeed(Chord);
