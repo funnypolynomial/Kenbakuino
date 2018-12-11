@@ -69,3 +69,4 @@ byte LEDs::m_pDirectControlPins[] =
 };
 
 LEDs leds = LEDs();
+

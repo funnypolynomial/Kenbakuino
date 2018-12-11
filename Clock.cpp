@@ -9,6 +9,8 @@ Clock::Clock():
 
 void Clock::Init()
 {
+  // Note: seems when an RTC is connected, A4 & A5 read HIGH, otherwise floating
+  //       pull pin low if absent, could detect presence of RTC
   Wire.begin();
 }
 
@@ -51,3 +53,4 @@ void Clock::WriteByte(byte Index, byte Value)
 }
 
 Clock clock = Clock();
+

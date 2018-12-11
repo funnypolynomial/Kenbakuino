@@ -48,6 +48,8 @@ bool ExtendedCPU::OnNOOPExtension(byte Op)
 // Extension: Stop+Read sys read
 // Extension: Stop+Store sys write
 // Extension: BitN+Stop set CPU speed to N
+// Extension: BitN+Disp write memory out to Serial
+// Extension: BitN+Set set memory from Serial
 
 
 void MCP::Init()
@@ -271,16 +273,32 @@ void MCP::OnInputClear(byte Chord)
   }
 }
 
-void MCP::OnAddressDisplay(byte )
+void MCP::OnAddressDisplay(byte Chord)
 {
-  m_Data = m_Address;
-  SetMode(eAddress);
+  if (Chord <= Buttons::eBit7)
+  {
+    // Extension: BitN+Disp = write program memory to serial
+    SerializeMemory(false, Chord);
+  }
+  else
+  {
+    m_Data = m_Address;
+    SetMode(eAddress);
+  }
 }
 
-void MCP::OnAddressSet(byte )
+void MCP::OnAddressSet(byte Chord)
 {
-  m_Address = CPU::cpu->Read(REG_INPUT_IDX);
-  Blink(eAddress);
+  if (Chord <= Buttons::eBit7)
+  {
+    // Extension: BitN+Stor = store program memory from serial
+    SerializeMemory(true, Chord);
+  }
+  else
+  {
+    m_Address = CPU::cpu->Read(REG_INPUT_IDX);
+    Blink(eAddress);
+  }
 }
 
 void MCP::OnMemoryRead(byte Chord)
@@ -418,4 +436,126 @@ bool MCP::SystemCall(byte& A, byte& B)
 }
 
 
+void MCP::SerializeMemory(bool Input, byte Chord)
+{
+  unsigned long baud = 4800UL * (0x01 << ((Chord - Buttons::eBit0) % 4));  // 4800, 9600, 19k2, 38k4
+  SetMode(eNone);
+  Serial.flush();
+  Serial.end();
+  Serial.begin(baud); // potentially drop the baud rate
+  byte Control = m_Control;
+  word State;
+  word Pressed;
+  if (Input)  // READ program memory from Serial
+  {
+    int bitsPerDigit = 3; // octal
+    int addr = 0;
+    int value = -1;
+    int ch = -1;
+    byte sum = 0;
+  
+    Serial.print("[0");
+    while (addr < 256)
+    {
+      if (buttons.GetButtons(State, Pressed, false) && buttons.IsPressed(Pressed, Buttons::eRunStop))
+      {
+        Serial.println(" STOP");
+        break;
+      }
+      
+      if (Serial.available() > 0) 
+      {
+        ch = Serial.read();
+        if (ch == 'x')   // hex
+        {
+          bitsPerDigit = 4;
+        }
+        else if (ch == 'e' || 
+                 ch == 's')   // end/stop
+        {
+          break;
+        }
+        else                  // digit?
+        {
+          int digit = (ch > '9')?ch - 'A' + 10:ch - '0';
+          if ((bitsPerDigit == 3 && 0 <= digit && digit <= 7)  || // valid octal
+              (bitsPerDigit == 4 && 0 <= digit && digit <= 15))   // valid hex
+          {
+            if (value == -1)
+            {
+              value = digit;
+              bitsPerDigit = 3; // default is octal
+            }
+            else
+              value = (value << bitsPerDigit) | digit;
+          }
+          else if (value != -1) // hit a non-digit and we've built up a value, save it
+          {
+            CPU::cpu->Write(addr++, value);
+            sum += value;
+            bitWrite(Control, eRun, !bitRead(Control, eRun)); // flash Run
+            leds.Display(m_Data, Control);
+            if ((addr % 16) == 0 && addr < 256)
+              Serial.print(addr / 16, HEX); // progress
+            value = -1;
+          }
+        }
+      }
+    }
+    
+    if (value != -1 && addr < 256)  // ended on a number with no delimeter, save it
+    {
+      CPU::cpu->Write(addr, value);
+      sum += value;
+    }
+  
+    Serial.print("] len=0x");
+    Serial.print(addr, HEX);
+    Serial.print(" chk=0x");
+    Serial.println(sum, HEX);
+    SetMode(eRun);
+  }
+  else  // WRITE program memory to Serial
+  {
+    for (int addr = 0; addr < 256; addr++)
+    {
+      if (buttons.GetButtons(State, Pressed, false) && buttons.IsPressed(Pressed, Buttons::eRunStop))
+      {
+        Serial.println(" STOP");
+        break;
+      }
+      
+      byte b = CPU::cpu->Read(addr);
+      
+      // don't flood the serial buffer
+      int ctr = 0;
+      while (Serial.availableForWrite() < 5 && ctr++ < 5)
+        delay(10);  
+     
+#if 1 // OCTAL
+        Serial.print('0');
+        Serial.print((b >> 6) & 0x07, OCT);
+        Serial.print((b >> 3) & 0x07, OCT);
+        Serial.print((b >> 0) & 0x07, OCT);
+        Serial.print(',');
+#else // HEX
+        Serial.print("0x");
+        Serial.print((b >> 4) & 0x0F, HEX);
+        Serial.print((b >> 0) & 0x0F, HEX);
+        Serial.print(',');
+#endif        
+      if ((addr % 16) == 15)
+        Serial.println();
+      bitWrite(Control, eRun, !bitRead(Control, eRun)); // flash Run
+      leds.Display(m_Data, Control);
+    }
+    SetMode(eInput);
+  }
+    
+  Serial.flush();
+  Serial.end();
+  Serial.begin(38400);  // restore the baud
+}
+
 MCP mcp = MCP();
+

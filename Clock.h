@@ -18,3 +18,4 @@ private:
 extern Clock clock;
 
 #endif
+

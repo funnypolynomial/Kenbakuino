@@ -564,9 +564,29 @@ void Programs::AssembleDBL(byte* pMem)
   }
 }
 
+#if 1
+// doing this frees up about 4k
+const byte programSieve[] PROGMEM = 
+{
+  0000,0000,0000,0004,0034,0200,0223,0200,0023,0002,0363,0111,0203,0001,0023,0003,
+  0363,0111,0003,0002,0203,0001,0243,0020,0223,0200,0203,0001,0363,0140,0044,0066,
+  0234,0171,0363,0140,0034,0167,0204,0000,0212,0203,0343,0064,0023,0000,0363,0111,
+  0204,0167,0343,0050,0224,0171,0203,0001,0243,0034,0223,0200,0363,0140,0044,0103,
+  0034,0200,0000,0203,0001,0243,0074,0343,0072,0300,0234,0170,0234,0001,0113,0204,
+  0146,0132,0213,0004,0036,0000,0224,0170,0353,0111,0036,0000,0224,0170,0353,0111,
+  0300,0234,0170,0234,0001,0113,0204,0146,0161,0213,0004,0026,0000,0224,0170,0353,
+  0140,0026,0000,0224,0170,0353,0140,0000
+};
+
+void Programs::AssembleSieve(byte* pMem)
+{
+    memcpy_P(pMem, programSieve, 120);
+}
+#else
 void Programs::AssembleSieve(byte* pMem)
 {
   // Sieve of Eratosthenes, primes up to 255
+  
   enum { Init, Sieve, Sieve1, Sieve2, Dump, List, List1, Zero, TempA, TempX, PrevX, vWrite, vWriteGE, vRead, vReadGE, 
     Table = 0200 // virtual start address, chosen so we seed the list up to 255 (and don't wrap)
   };
@@ -668,5 +688,5 @@ void Programs::AssembleSieve(byte* pMem)
       equ(0000)
   }
 }
-
+#endif
 

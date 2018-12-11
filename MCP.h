@@ -48,6 +48,7 @@ private:
   void Blink(byte LED);
   bool SystemCall(byte& A, byte& B);
   bool OnNOOPExtension(byte Op);
+  void SerializeMemory(bool Input, byte Chord);
   
   bool m_bRunning;
   byte m_Data;
@@ -60,3 +61,4 @@ private:
 
 extern MCP mcp;
 #endif
+

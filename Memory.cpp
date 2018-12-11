@@ -19,6 +19,7 @@
 // BUT it's convenient to have the "source" of the more complicated ones, so they are
 // "assembled" on demand (see Programs.cpp).  The upside is they're easier to develop
 // the downside is they're a little slower to load, and they increase Arduino sketch size.
+// STOP PRESS: to free up some space, the Sieve program is now stored as PROGMEM, the source is #ifdef'd out
 prog_uchar programCounter[]  PROGMEM = {
     0000, 0000, 0000, 0004, 0103, 0001, 0134, 0200, 0344, 0004
 };
@@ -138,4 +139,5 @@ void Memory::BuildSlots(byte Map)
 }
 
 Memory memory = Memory();
+
 

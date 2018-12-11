@@ -203,6 +203,13 @@ delay to 1ms.  b7+STOP sets it to 128ms.  The delay is set to 1 at power on
 and on CLR+STOR (Extension #3 Erase above) of if a program executes the 
 SysInfo instruction, 0360.
 
+Extension #8 Send/Receive Memory ---------------------------------------------
+Pressing BitN+DISP writes program memory as 16 lines of 16 bytes of octal data
+to the serial port.
+Pressing BitN+SET read program memory from the serial port. BitN sets the baud.
+0/1/2/3=4800/9600/19k2/38k4. 
+Refer to serial.txt.
+
 Not done ---------------------------------------------------------------------
 It would be really useful to move the Input and Flag bytes (0200-0203)
 up alongside the Output byte (0377) to provide a larger contiguous block of 

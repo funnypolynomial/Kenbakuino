@@ -1,0 +1,85 @@
+There are two extensions to read/write memory via the serial port:
+BitN+DISP displays the program memory as 16 lines of 16 octal bytes via Serial at baudN
+BitN+SET sets the program memory from text read from Serial at baudN
+Press STOP to halt the operations.
+baud0/1/2/3 are 4800/9600/19200/38400, 4/5/6/7 are the same as 0/1/2/3
+The serial port is returned to 38400 at the end of the operation.
+
+Display Memory:
+For example, after loading the Sieve program (STOP+Bit6), and running it, pressing Bit0+DISP will display this via Serial at 4800baud:
+0002,0374,0200,0103,0034,0200,0223,0200,0023,0002,0363,0111,0203,0001,0023,0003,
+0363,0111,0003,0002,0203,0001,0243,0020,0223,0200,0203,0001,0363,0140,0044,0066,
+0234,0171,0363,0140,0034,0167,0204,0000,0212,0203,0343,0064,0023,0000,0363,0111,
+0204,0167,0343,0050,0224,0171,0203,0001,0243,0034,0223,0200,0363,0140,0044,0103,
+0034,0200,0000,0203,0001,0243,0074,0343,0072,0060,0234,0170,0234,0001,0113,0204,
+0146,0132,0213,0004,0036,0000,0224,0170,0353,0111,0036,0000,0224,0170,0353,0111,
+0076,0234,0170,0234,0001,0113,0204,0146,0161,0213,0004,0026,0000,0224,0170,0353,
+0140,0026,0000,0224,0170,0353,0140,0373,0200,0375,0000,0000,0002,0003,0005,0007,
+0002,0002,0002,0001,0000,0013,0015,0000,0021,0023,0000,0027,0000,0000,0035,0037,
+0000,0000,0045,0000,0051,0053,0000,0057,0000,0000,0065,0000,0000,0073,0075,0000,
+0000,0103,0000,0107,0111,0000,0000,0117,0000,0123,0000,0000,0131,0000,0000,0000,
+0141,0000,0145,0147,0000,0153,0155,0000,0161,0000,0000,0000,0000,0000,0000,0177,
+0000,0203,0000,0000,0211,0213,0000,0000,0000,0000,0225,0227,0000,0000,0235,0000,
+0000,0243,0000,0247,0000,0000,0255,0000,0000,0263,0265,0000,0000,0000,0000,0277,
+0301,0000,0305,0307,0000,0000,0000,0000,0000,0323,0000,0000,0000,0000,0000,0337,
+0000,0343,0345,0000,0351,0000,0000,0357,0361,0000,0000,0000,0000,0373,0000,0001,
+
+Set Memory (program load):
+For example, pressing Bit0+SET will start reading characters from Serial at 4800baud.
+By default the program expects octal constants, delimited by almost anything (comma, newline etc).
+Prefix hexadecimal constants with 0x. Use uppercase A..F.
+Each number is treated as a single byte and written to program memory, starting from address 000.
+The operation halts when:
+* the 256th byte is written to memory
+* either an 'e' or an 's' (lowercase) is read from Serial (i.e. end/stop). 
+* STOP is pressed
+When running, the program displays the most significant nibble of the current address (hex). 
+When finished it displays the length and checksum (sum modulo 256) in hex:
+[0123456789ABCDEF] len=0x100 chk=0x9E
+
+Examples
+A file containing this:
+0000,0000,0000,0004,0023,0220,0123,0000,0360,0023,0221,0123,0000,0360,0023,0021,
+0360,0134,0002,0023,0021,0360,0134,0001,0134,0000,0323,0017,0034,0001,0023,0220,
+0360,0023,0222,0123,0024,0360,0024,0001,0001,0034,0001,0023,0220,0360,0234,0200,
+0023,0222,0123,0050,0360,0343,0016,
+s
+
+or this:
+0x00 0x00 0x00 0x04 0x13 0x90 0x53 0x00 0xF0 0x13 0x91 0x53 0x00 0xF0 0x13 0x11
+0xF0 0x5C 0x02 0x13 0x11 0xF0 0x5C 0x01 0x5C 0x00 0xD3 0x0F 0x1C 0x01 0x13 0x90
+0xF0 0x13 0x92 0x53 0x14 0xF0 0x14 0x01 0x01 0x1C 0x01 0x13 0x90 0xF0 0x9C 0x80
+0x13 0x92 0x53 0x28 0xF0 0xE3 0x0E 
+e
+
+will upload Das Blinken Lights.
+
+Notes:
+Higher baud rates may be less reliable, although setting a transmit delay may help.
+I've used Tera Term (https://osdn.net/projects/ttssh2/) on Windows 10.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
