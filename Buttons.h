@@ -30,7 +30,7 @@ public:
 
   void Init();
 
-  bool GetButtons(word& State, word& NewPressed, bool Wait);
+  bool GetButtons(word& State, word& NewPressed, bool deBounce);
   bool IsPressed(word BtnState, int Btn);
   bool GetButtonDown(word BtnState, int& Btn);
 
@@ -38,6 +38,9 @@ private:
   word ShiftIn(int LatchPin, int DataPin, int ClockPin, int BitOrder);
   static byte m_pMap[];
   word m_wPrevState;
+  
+  word m_wPrevReading;
+  unsigned long m_iTransitionTimeMS;
 };
 
 extern Buttons buttons;
