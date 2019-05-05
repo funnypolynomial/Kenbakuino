@@ -12,6 +12,7 @@
 //  Jun 2015: Changes to compile under v1.6.4 if the IDE, (#define for deprecated prog_uchar)  
 //  Dec 2018: Corrected SDA/SCL pins, clarified that RTC is a DS1307 module/breakout (i.e. with XTAL)
 //            GitHub. Serial read/write memory
+//  May 2019: Added Auto-run program at start-up
 // ==================================================================
 
 // WTF.  We need to include these in the "main sketch" if we want to include them in "tabs"?
@@ -34,9 +35,9 @@ void setup()
   Serial.begin(38400);
 
   clock.Init();
+  buttons.Init();
   config.Init();
   leds.Init();
-  buttons.Init();
   cpu.Init();
   memory.Init();
   mcp.Init();

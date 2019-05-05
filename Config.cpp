@@ -5,17 +5,24 @@
 #include "Clock.h"
 #include "Memory.h"
 
+#define TOGGLE_BITS_FLAG 0x01
+
 Config::Config():
   m_bToggleBits(true),
   m_iCycleDelayMilliseconds(0),
-  m_iEEPROMSlotMap(0x0A)
+  m_iEEPROMSlotMap(0x0A),
+  m_iAutoRunProgram(0)
 {
 }
 
 void Config::Init()
 {
+  CheckStartupConfig();
   UpdateFlags(Read(eControlFlags));
-  m_iEEPROMSlotMap = Read(eControlEEPROMMap);
+  byte slots = Read(eControlEEPROMMap);
+  if (slots != 0xFF)  // probably uninitialised or no RTC battery-backed ram, ignore
+    m_iEEPROMSlotMap = slots;
+  m_iAutoRunProgram = Read(eControlAutoRun);
 }
 
 byte Config::Read(byte Item)
@@ -62,7 +69,7 @@ byte Config::Read(byte Item)
     case eControlUser3:
     case eControlUser4:
     case eControlUser5:
-    case eControlUser6:
+    case eControlAutoRun:
       // read from the user memory on the DS1307 RTC
       return clock.ReadByte(Item);
       
@@ -144,7 +151,7 @@ bool Config::Write(byte Item, byte Value)
     case eControlUser3:
     case eControlUser4:
     case eControlUser5:
-    case eControlUser6:
+    case eControlAutoRun:
     {
       clock.WriteByte(Item, Value);
       break;
@@ -201,7 +208,43 @@ void Config::SetCPUSpeed(byte Bit)
 
 void Config::UpdateFlags(byte Value)
 {
-  m_bToggleBits = (Value & 0x01) == 0x01;
+  m_bToggleBits = (Value & TOGGLE_BITS_FLAG) == TOGGLE_BITS_FLAG;
+}
+
+void Config::CheckStartupConfig()
+{
+  // Check buttons held at startup to configure program auto-run
+  // * Stop & BitN   = load built-in program N
+  // * Read & BitN   = load from EEPROM slot N
+  // * Stop         = turn auto-run off
+  // * Stop & Clear = reset config to defaults
+  word State, NewPressed;
+  if (buttons.GetButtons(State, NewPressed, false)) // read button state
+  {
+    if (buttons.IsPressed(State, Buttons::eRunStop) || buttons.IsPressed(State, Buttons::eMemoryRead))  // Stop or Read is down
+    {
+      byte Mode = buttons.IsPressed(State, Buttons::eRunStop)?AUTO_RUN_BUILTIN:AUTO_RUN_EEPROM;
+      // which BitN?
+      for (int Btn = Buttons::eBit0; Btn <= Buttons::eBit7; Btn++)
+      {
+        if (buttons.IsPressed(State, Btn))
+        {
+          Write(eControlAutoRun, Mode + Btn);
+          return; // only the first we see
+        }
+      }
+      
+      if (Mode == AUTO_RUN_BUILTIN) // Stop but no BitN, clear
+      {
+        Write(eControlAutoRun, 0);
+        if (buttons.IsPressed(State, Buttons::eInputClear)) // Stop & Clear, reset config to defaults
+        {
+          Write(eControlFlags, TOGGLE_BITS_FLAG);
+          Write(eControlEEPROMMap, m_iEEPROMSlotMap);
+        }
+      }
+    }
+  }
 }
 
 

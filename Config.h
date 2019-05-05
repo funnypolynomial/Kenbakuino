@@ -2,6 +2,10 @@
 #define config_h
 
 // Configuration settings and also "SysInfo"
+
+#define AUTO_RUN_BUILTIN 0b00010000
+#define AUTO_RUN_EEPROM  0b00100000
+
 class Config
 {
 public:
@@ -24,7 +28,7 @@ public:
     eControlUser3,
     eControlUser4,
     eControlUser5,
-    eControlUser6,
+    eControlAutoRun,  // was User6
     
     // ------------
     eControlLEDs,
@@ -44,9 +48,11 @@ public:
   bool m_bToggleBits;  // if true pressing a Bit button toggles the value, otherwise it only sets it
   byte m_iCycleDelayMilliseconds;      // delay each cpu "cycle"
   byte m_iEEPROMSlotMap;  // indicates halving of program slots in EEPROM, see Memory::BuildSlots()
+  byte m_iAutoRunProgram;
   
 private:
   void UpdateFlags(byte Value);
+  void CheckStartupConfig();
 };
 
 extern Config config;

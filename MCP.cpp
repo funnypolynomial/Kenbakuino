@@ -40,6 +40,7 @@ bool ExtendedCPU::OnNOOPExtension(byte Op)
 ////////////////////////////////////////////////////
 // "master control program" (heh)
 
+// Chords; Btn1+Btn2 means, press hold Btn1 then press Btn2
 // Extension: Stop+Clear: blank display
 // Extension: Stop+BitN: load pre-defined program N
 // Extension: Clear+Store clear memory
@@ -50,6 +51,15 @@ bool ExtendedCPU::OnNOOPExtension(byte Op)
 // Extension: BitN+Stop set CPU speed to N
 // Extension: BitN+Disp write memory out to Serial
 // Extension: BitN+Set set memory from Serial
+//
+// Press at power on to configure program to auto-run
+// * Stop & BitN  = load built-in program N
+// * Read & BitN  = load from EEPROM slot N
+// * Stop         = turn auto-run off
+// and
+// * Stop & Clear = reset config to defaults
+
+
 
 
 void MCP::Init()
@@ -61,6 +71,8 @@ void MCP::Init()
   m_Address = 0x00;
   SetMode(eInput);
   leds.Display(m_Data, m_Control);
+
+  AutoRun(config.m_iAutoRunProgram);
 }
 
 void MCP::Splash()
@@ -556,6 +568,23 @@ void MCP::SerializeMemory(bool Input, byte Chord)
   Serial.end();
   Serial.begin(38400);  // restore the baud
 }
+
+void MCP::AutoRun(byte Auto)
+{
+  // Run the program, Auto is 0b00XX0NNN where XX: 00 = off, 01 = built-in, 10 = EEPROM 
+  // NNN is built-in program number or EEPROM slot
+  byte Mode = Auto & 0b11111000;
+  byte Prog = Auto & 0b00000111;
+  if (Mode == AUTO_RUN_EEPROM || Mode == AUTO_RUN_BUILTIN)
+  {
+    if (Mode == AUTO_RUN_EEPROM)
+      OnMemoryRead(Prog);                     // read from EEPROM slot NNN (BitN+Read)
+    else
+      OnInputButton(Prog, Buttons::eRunStop); // load pre-defined program NNN (Stop+BitN) 
+    OnRunStart(Buttons::eUnused);
+  }
+}
+
 
 MCP mcp = MCP();
 

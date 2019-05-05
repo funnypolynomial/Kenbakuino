@@ -106,8 +106,13 @@ Thus for example, a Map of 012 creates the following page sizes:
   014: User #3
   015: User #4
   016: User #5
-  017: User #6
-These 6 bytes are available for reading and writing non-volatile values.
+These 5 bytes are available for reading and writing non-volatile values.
+
+  017: Auto-run (New)
+This byte configures auto-running a program at startup (See Extension #9).  
+It's binary form is 0b00XX0NNN where 
+XX: 00 = off, 01 = built-in, 10 = EEPROM
+NNN: built-in program number or EEPROM slot
 
 The final 6 Index values act as follows:
   020: Control LEDs
@@ -209,6 +214,16 @@ to the serial port.
 Pressing BitN+SET read program memory from the serial port. BitN sets the baud.
 0/1/2/3=4800/9600/19k2/38k4. 
 Refer to serial.txt.
+
+Extension #9 Auto-Run Program/Reset Configuration ----------------------------
+Holding buttons down while turning the device on configure automatically 
+running a program at power-on:
+  Stop and BitN : auto-run built-in program N
+  Read and BitN : auto-run from EEPROM slot N
+  Stop          : turn auto-run off
+In addition, holding
+  Stop and Clear
+will reset configuration to defaults.
 
 Not done ---------------------------------------------------------------------
 It would be really useful to move the Input and Flag bytes (0200-0203)

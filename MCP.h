@@ -49,6 +49,7 @@ private:
   bool SystemCall(byte& A, byte& B);
   bool OnNOOPExtension(byte Op);
   void SerializeMemory(bool Input, byte Chord);
+  void AutoRun(byte Auto);
   
   bool m_bRunning;
   byte m_Data;
