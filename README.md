@@ -16,6 +16,13 @@ See **kenbakuino.txt** for detailed information about the sketch.  It attempts t
 
 **You can now buy a [kit](https://www.adwaterandstir.com/kenbak/) which uses the sketch and more closely matches the look of the original.**
 
+Changes since the original:
+
+**Dec '18** Extension #8: Send/Receive Memory over Serial
+
+**May '19** Extension #9: Auto-Run Program/Reset Configuration 
+
+
 Schematic (taken from PINS.H)
 ````
 #ifndef pins_h
