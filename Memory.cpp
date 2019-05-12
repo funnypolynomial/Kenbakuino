@@ -6,6 +6,7 @@
 #include "Cpu.h"
 #include "Programs.h"
 #include "Config.h"
+#include "Clock.h"
 
 // Is there a way to find out at runtime?
 #define kEEPROMSize (1024)  
@@ -27,6 +28,18 @@ prog_uchar programCounter[]  PROGMEM = {
 prog_uchar programCylon[]  PROGMEM = {
     0000, 0000, 0000, 0004, 0023, 0001, 0034, 0200, 0211, 0034, 0200, 0372, 0200, 0343, 0010, 0011, 0034, 0200, 0202, 0200, 0343, 0010, 0343, 0017
 };
+
+
+ // index of the last available byte, excluding any used for confg settings when the RTC has none
+int Memory::GetEEPROMTopIdx()
+{
+  int top = kEEPROMSize - 1;
+  if (Clock::RTC_I2C_ADDR == 0x00 || Clock::RTC_USER_SRAM_OFFSET == 0x00)
+  {
+    top -= 8; // reserve 8 bytes at the top off EEPROM;
+  }
+  return top;
+}
 
 void Memory::Init()
 {
@@ -116,12 +129,13 @@ void Memory::BuildSlots(byte Map)
 
   int Addr = 0;
   int Size = 256;
+  int EEPROMSize = GetEEPROMTopIdx() + 1;
   for (int Slot = 0; Slot < 8; Slot++)
   {
-    if (Addr < kEEPROMSize && Size != 0)
+    if (Addr < EEPROMSize && Size != 0)
     {
       m_pSlotStartAddr[Slot] = Addr;
-      m_pSlotSize[Slot] = Size;
+      m_pSlotSize[Slot] = min(Size, EEPROMSize - Addr);
     }
     else
     {
@@ -129,7 +143,6 @@ void Memory::BuildSlots(byte Map)
       m_pSlotStartAddr[Slot] = 0;
       m_pSlotSize[Slot] = 0;
     }
-
     Addr += Size;
     if (Map & (0x01 << Slot))
     {

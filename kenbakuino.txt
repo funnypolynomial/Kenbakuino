@@ -86,7 +86,7 @@ The first 8 values for the Index read/write the DS1307 RTC registers
 No validation is performed.  
 
 The next 8 values read/write bytes to the subsequent 8 bytes of "user" RAM in
-the DS1307:
+the DS1307 (or a different RTC, or EEPROM, see the constants in Clock.h):
   010: Flags controlling the Kenbak-uino. 
 Currently only 1, if b0 is set, pressing one of the Data switches *toggles* 
 the bit, otherwise it only sets it (as per the KENBAK-1).
@@ -108,13 +108,14 @@ Thus for example, a Map of 012 creates the following page sizes:
   016: User #5
 These 5 bytes are available for reading and writing non-volatile values.
 
+The final 7 Index values act as follows:
+
   017: Auto-run (New)
 This byte configures auto-running a program at startup (See Extension #9).  
 It's binary form is 0b00XX0NNN where 
 XX: 00 = off, 01 = built-in, 10 = EEPROM
 NNN: built-in program number or EEPROM slot
 
-The final 6 Index values act as follows:
   020: Control LEDs
 Reading does nothing.  Writing sets the control LEDs as follows:
    b0:INP
@@ -205,7 +206,7 @@ Extension #7 CPU Speed -------------------------------------------------------
 Pressing BitN+STOP sets the "CPU speed".  It sets the delay in milliseconds 
 added after each CPU cycle, equal to 2^N ms.  Thus b0+STOP sets the
 delay to 1ms.  b7+STOP sets it to 128ms.  The delay is set to 1 at power on
-and on CLR+STOR (Extension #3 Erase above) of if a program executes the 
+and on CLR+STOR (Extension #3 Erase above) or if a program executes the 
 SysInfo instruction, 0360.
 
 Extension #8 Send/Receive Memory ---------------------------------------------

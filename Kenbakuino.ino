@@ -13,6 +13,7 @@
 //  Dec 2018: Corrected SDA/SCL pins, clarified that RTC is a DS1307 module/breakout (i.e. with XTAL)
 //            GitHub. Serial read/write memory
 //  May 2019: Added Auto-run program at start-up
+//            Added Clock consts for no RTC or RTC with no SRAM
 // ==================================================================
 
 // WTF.  We need to include these in the "main sketch" if we want to include them in "tabs"?

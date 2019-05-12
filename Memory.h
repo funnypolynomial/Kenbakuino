@@ -10,6 +10,7 @@ public:
   bool LoadStandardProgram(byte Index);
   bool ReadMemoryFromEEPROMSlot(byte Slot);
   bool WriteMemoryToEEPROMSlot(byte Slot);
+  int GetEEPROMTopIdx();
   
 private:
   int m_pSlotStartAddr[8];
