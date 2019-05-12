@@ -20,7 +20,9 @@ Changes since the original:
 
 **Dec '18** Extension #8: Send/Receive Memory over Serial
 
-**May '19** Extension #9: Auto-Run Program/Reset Configuration 
+**May '19** 
+1. Extension #9: Auto-Run Program/Reset Configuration 
+2. Constants to configure RTC
 
 
 Schematic (taken from PINS.H)
