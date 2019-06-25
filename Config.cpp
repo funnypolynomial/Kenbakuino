@@ -1,4 +1,8 @@
 #include <Arduino.h>
+// disable warnings in EEPROM.h
+#pragma GCC diagnostic ignored "-Wignored-qualifiers"
+#include <EEPROM.h>
+#pragma GCC diagnostic pop
 #include "Config.h"
 #include "MCP.h"
 #include "Buttons.h"
@@ -13,6 +17,8 @@ Config::Config():
   m_iEEPROMSlotMap(0x0A),
   m_iAutoRunProgram(0)
 {
+    m_EEPROMOffset = m_RAMOffset = m_EEPROMSize = 0;
+
 }
 
 void Config::Init()
@@ -25,7 +31,7 @@ void Config::Init()
   m_iAutoRunProgram = Read(eControlAutoRun);
 }
 
-byte Config::Read(byte Item)
+byte Config::Read(byte Item, byte Value)
 {
   // read the SysInfo item with the given index
   switch (Item)
@@ -88,6 +94,16 @@ byte Config::Read(byte Item)
         return Serial.read();
       break;
     }
+    case eEEPROMOffset:
+      return m_EEPROMOffset;
+    case eRAMOffset:
+      return m_RAMOffset;
+    case eEEPROMSize:
+      return m_EEPROMSize;
+    case eEEPROMOverlay:
+      return m_EEPROMOffset;
+    case eEEPROMPage:
+      return ReadFromEEPROM(true, Value);
   }
   return 0;
 }
@@ -194,6 +210,22 @@ bool Config::Write(byte Item, byte Value)
       Serial.write(Value);
       break;
     }
+    case eEEPROMOffset:
+      m_EEPROMOffset =  Value;
+      break;
+    case eRAMOffset:
+      m_RAMOffset = Value;
+      break;
+    case eEEPROMSize:
+      m_EEPROMSize = Value?Value:256; // 0 size means 256
+      break;
+    case eEEPROMOverlay:  // shortcut sets them all
+      m_EEPROMOffset = m_RAMOffset = Value;
+      m_EEPROMSize = 256 - Value;
+      break;
+    case eEEPROMPage:
+      ReadFromEEPROM(false, Value);
+      break;
   }
   return true;
 }
@@ -247,6 +279,45 @@ void Config::CheckStartupConfig()
   }
 }
 
+byte Config::ReadFromEEPROM(bool Read, byte EEPROMPage)
+{
+  // Reads bytes from EEPROM into RAM or vice-versa
+  int slot = EEPROMPage & 0b00000111;
+  bool preserve = EEPROMPage & COPY_EEPROM_PRESERVE;
+  int ramSize = m_EEPROMSize;
+  int eepromIdx = memory.SlotStartAddr(slot) + m_EEPROMOffset;
+  int eepromMax = memory.SlotStartAddr(slot) + memory.SlotSize(slot);
+  int ramIdx = m_RAMOffset;
+  int ramMax = 256;
+  if (EEPROMPage & COPY_EEPROM_PAGE)
+  {
+    // page is not a slot, it's 256-byte blocks
+    eepromIdx = 256*slot + m_EEPROMOffset;
+    eepromMax = 256*slot + 256;
+  }
+  eepromMax = min(eepromMax, memory.GetEEPROMTopIdx() + 1);
+
+  while (ramSize && ramIdx < ramMax && eepromIdx < eepromMax)
+  {
+    if (Read)
+    {
+      // reserved mem  --- A, B, X, P ----     ------------- OUTPUT, FLAGS A, B & X ----------------     -------- OUTPUT -------
+      bool reserved = (ramIdx <= REG_P_IDX || (REG_OUTPUT_IDX <= ramIdx && ramIdx <= REG_FLAGS_X_IDX) || ramIdx == REG_INPUT_IDX);
+      if (!preserve || !reserved)
+      {
+        CPU::cpu->Write(ramIdx, EEPROM.read(eepromIdx));
+      }
+    }
+    else
+    {
+      EEPROM.write(eepromIdx, CPU::cpu->Read(ramIdx));
+    }
+    ramIdx++;
+    eepromIdx++;
+    ramSize--;
+  }
+  return EEPROMPage;
+}
 
 Config config = Config();
 

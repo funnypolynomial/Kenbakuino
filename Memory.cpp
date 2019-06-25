@@ -1,5 +1,8 @@
 #include <Arduino.h>
+// disable warnings in EEPROM.h
+#pragma GCC diagnostic ignored "-Wignored-qualifiers"
 #include <EEPROM.h>
+#pragma GCC diagnostic pop
 #include <avr/pgmspace.h>
 
 #include "Memory.h"
@@ -149,6 +152,16 @@ void Memory::BuildSlots(byte Map)
       Size /= 2;
     }
   }
+}
+
+int Memory::SlotStartAddr(byte Slot)
+{
+  return m_pSlotStartAddr[Slot % 8];
+}
+
+int Memory::SlotSize(byte Slot)
+{
+  return m_pSlotSize[Slot % 8];
 }
 
 Memory memory = Memory();

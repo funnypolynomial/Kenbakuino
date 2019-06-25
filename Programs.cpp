@@ -12,6 +12,8 @@
 #define lbl(_l)     m_iPass?m_pLabels[_l]:0
 #define def(_l)     m_pLabels[_l] = m_iIndex;
 
+#define SYSX_WRITE(_a) (0x80 | (_a))
+#define SYSX_READ(_a)  (_a)
 #define SYSX 0360
 #define HALT 0000
   // c - const
@@ -37,8 +39,14 @@
 #define ADBa 0104
 #define ADXa 0204
 #define SUAa 0014
-  // x - indexed
+// x - indexed
 #define LDAx 0026
+
+// b - bit ops
+#define SETb(_bit) (0002 | (_bit << 3))
+#define CLRb(_bit) (0102 | (_bit << 3))
+#define SKCb(_bit) (0202 | (_bit << 3))  // skip if bit clear
+#define SKSb(_bit) (0302 | (_bit << 3))  // skip if bit set
 
 #define JMPu 0343
 #define RETa 0353

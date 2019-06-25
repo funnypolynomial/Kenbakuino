@@ -442,7 +442,7 @@ bool MCP::SystemCall(byte& A, byte& B)
   }
   else
   {
-    B = config.Read(Index);
+    B = config.Read(Index, B);
   }
   return true;
 }

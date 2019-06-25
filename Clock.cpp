@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
+// disable warnings in EEPROM.h
+#pragma GCC diagnostic ignored "-Wignored-qualifiers"
 #include <EEPROM.h>
+#pragma GCC diagnostic pop
 #include "Clock.h"
 #include "Config.h"
 #include "Memory.h"

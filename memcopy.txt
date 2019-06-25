@@ -1,0 +1,68 @@
+There are five SYSX (SysInfo) commands which combine to control copying bytes between program RAM and EEPROM and vice-versa.  
+  024: EEPROM Offset
+  025: RAM Offset
+  026: EEPROM Size
+  027: EEPROM Overlay
+  030: EEPROM Page
+
+Behind the scenes there are 3 variables: 
+* EEPROMOffset, the offset from the start of the EEPROM page 
+* RAMOffset, the offset into program RAM
+* EEPROMSize, the number of bytes to copy
+
+Writing:
+Performing a SYSX WRITE with the command in A (plus the high bit set for a Write operation) and a value in B acts as follows
+A=0224: EEPROMOffset = B,
+
+A=0225: RAMOffset = B. 
+
+A=0226: EEPROMSize = B.
+If B is 0, EEPROMSize = 256.
+
+A=0227: EEPROMOffset = B,  AND ALSO
+        RAMOffset    = B,  AND ALSO
+        EEPROMSize   = 256 - B.  
+Thus by default the offsets will match, and the copy will be "the rest of memory". 
+EEPROM Overlay is basically a short-cut to calling EEPROM Offset, RAM Offset & EEPROM Size.
+
+A=0230: Specifies the EEPROM page in B and actually performs the copy (*WRITES* program RAM to EEPROM).
+It writes EEPROMSize bytes of program memory, staring at RAMOffset, to EEPROM starting at EEPROMOffset within the page.
+Page is of the form B=0b000fxnnn (binary). 
+* If x = 0, nnn is the program slot, otherwise it is the number of 256-byte blocks of EEPROM.
+* If f = 1, reserved byte locations (0000-0003, 0200-0203, 0377) are *not* over-written on a Read.
+
+Reading:
+A READ operation (commands as above, but with the high bit clear) just returns the relevant register.
+EXCEPT for 030 which *READS* EEPROM into program RAM, as above, leaving B unchanged.
+But note that this is unusual in that it is a READ, but instead of filling-in the B register, it requires a value already in it.
+
+Reading and Writing are limited to not go beyond the end of the program slot.
+
+Overlay code:
+You can for example, overlay code. 
+Consider two programs, Main and Extra. 
+Main has program logic in low memory and subroutine SubMain at address 0220. 
+Main is loaded into EEPROM program slot #0 and also program memory.
+Extra just has subroutine SubExtra also at address 0220. 
+Extra is loaded into EEPROM program slot #1.
+
+(Pseudo-assembler code) 
+Main prepares things with
+LDA #0227	; WRITE flag + 027, EEPROM Overlay
+LDB #0220	; Offset of address of start of subroutine(s)
+SYSX		; sets source and destination addresses and the size to be the rest of memory
+
+it can then call SubExtra with
+LDA #0030	; (READ) 030, (from) EEPROM Page
+LDB #1		; slot #1
+SYSX		; load SubExtra
+JSR 0220	; jump to SubExtra
+
+or SubMain with
+LDA #0030	; (READ) 030, (from) EEPROM Page
+LDB #0		; slot #0
+SYSX		; load SubMain 
+JSR 0220	; jump to SubMain 
+
+Other uses:
+You could use the 1k EEPROM as extended storage, but note that EEPROM has a finite lifetime (about 100k writes)

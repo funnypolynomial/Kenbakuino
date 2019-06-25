@@ -11,6 +11,8 @@ public:
   bool ReadMemoryFromEEPROMSlot(byte Slot);
   bool WriteMemoryToEEPROMSlot(byte Slot);
   int GetEEPROMTopIdx();
+  int SlotStartAddr(byte Slot);
+  int SlotSize(byte Slot);
   
 private:
   int m_pSlotStartAddr[8];

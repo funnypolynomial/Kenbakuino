@@ -71,7 +71,9 @@ operation is a "write" otherwise it is a "read".  The remaining 7 bits provide
 the Index of the item.  The argument for a write comes from the B register.
 The result of a read is placed in the B register.
 Note that some writes actually perform an *action* and the corresponding 
-reads do nothing.  Executing the SysInfo instruction resets the CPU speed.
+reads do nothing.  Operation 027 (EEPROM Page) read requires a value in B!
+Executing the SysInfo instruction resets the CPU speed.
+The SysInfo instruction is often referred to as SYSX (system extension op-code)
 
 The first 8 values for the Index read/write the DS1307 RTC registers 
 (see http://datasheets.maxim-ic.com/en/ds/DS1307.pdf).  Numbers are BCD.
@@ -136,6 +138,14 @@ This is separate from the "CPU Speed" (Extension #7 below.)
 
   023: Serial
 Reads or writes a byte from the Serial port (@38400baud)
+
+  024: EEPROM Offset
+  025: RAM Offset
+  026: EEPROM Size
+  028: EEPROM Overlay
+  030: EEPROM Page
+These five commands control copying bytes between program RAM and EEPROM.  
+You can, for example, use it to overlay code. See memcopy.txt
 
  0177: Reading this special value simply returns 0 in Register A, indicating 
 that extensions are enabled.  Writing does nothing.
