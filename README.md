@@ -18,12 +18,14 @@ See **kenbakuino.txt** for detailed information about the sketch.  It attempts t
 
 Changes since the original:
 
-**Dec '18** Extension #8: Send/Receive Memory over Serial
+**Dec '18** Extension #8: Send/Receive Memory over Serial. See serial.txt
 
 **May '19** 
 1. Extension #9: Auto-Run Program/Reset Configuration 
 2. Constants to configure RTC
 
+**Jun '19**
+SYSX extensions to copy RAM to/from EEPROM. See memcopy.txt
 
 Schematic (taken from PINS.H)
 ````
