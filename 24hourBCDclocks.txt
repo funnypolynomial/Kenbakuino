@@ -1,0 +1,302 @@
+By request, a couple of 24-hour mode versions of the BCD clock (STOP+Bit3)
+
+--- BCD 24-hour Version 1 of 2 ---
+Replace the method in Programs.cpp with this for 24-hour display:
+
+void Programs::AssembleBCDClock(byte* pMem)  // 24-hour display version
+{
+  enum { ShowHr, ScrollLeft, Left, Right, Display, Mins, Hours, Blink, DoBlink, BlinkLoop};
+
+  m_pMemory = pMem;
+  
+  for (m_iPass = 0; m_iPass < 2; m_iPass++)
+  {
+    pc(0)
+      equ(0000)
+      equ(0000)
+      equ(0000)
+      equ(0004)
+      // init
+      op2(LDAc, 0xFF)
+      op1(SYSX)                       // SYS got extensions?
+      op2(0272, REG_A_IDX)            // skip next two if A has b7 not set
+      op1(0300)                       // noop
+      op1(0000)                       // halt, no extensions
+      op2(LDAc, 128 + Config::eControlLEDs)
+      op2(LDBc, 0000)                 // LDB #0
+      op1(SYSX)                       // SYS clear control LEDs
+    def(ShowHr)
+      op2(LDAc, Config::eClockHours24)
+      op1(SYSX)                       // SYS get hr-24 BCD (in B)
+      op2(STBa, lbl(Display))         // B has hour
+      op2(STBa, lbl(Hours))
+      op2(LDAc, 0000)                 // LDA #0 (no blink)
+      op2(STAa, lbl(Blink))           // save A (blink)
+      op2(0363, lbl(DoBlink))
+
+      op2(LDAc, Config::eClockMinutes)
+      op1(SYSX)                       // SYS get min BCD
+
+      op2(0363, lbl(ScrollLeft))
+
+      op2(LDAc, 0200)                 // LDA #128 (blink)
+      op2(STAa, lbl(Blink))           // save A (blink)
+      op2(0363, lbl(DoBlink))
+
+      op2(LDXc, 8)
+    def(Right)
+      // scroll right
+      op2(LDAa, lbl(Display))
+      op1(0011) //right shift A 1
+      op2(STAa, lbl(Display))
+      op2(LDAa, lbl(Hours))
+      op1(0111) //right roll A 1
+      op2(STAa, lbl(Hours))
+      op2(ANDc, 0100)
+      op2(ADAa, lbl(Display))
+      op2(STAa, lbl(Display))
+      op2(STAa, REG_OUTPUT_IDX)
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 100)
+      op1(SYSX)    // SYS sleep
+      op2(SUXc, 1)
+      op2(0243, lbl(Right))
+
+      op2(JMPu, lbl(ShowHr))
+
+    def(DoBlink)
+      op1(0300)                       // NOOP: space for the return addr
+      op2(LDXc, 5)                    // LDX with counter
+      op2(LDAa, lbl(Display))         // load (display)
+    def(BlinkLoop)
+      op2(STAa, REG_OUTPUT_IDX)       // Show it
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 250)                  // LDB #250
+      op1(SYSX)                       // SYS sleep 250ms
+      op1(SYSX)                       // SYS sleep 250ms
+      op2(LDAa, REG_OUTPUT_IDX)       // reload A
+      op2(ADAa, lbl(Blink))           // add blink mask
+      op2(STAa, REG_OUTPUT_IDX)       // Show it
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 250)                  // LDB #250
+      op1(SYSX)                       // SYS sleep 250ms
+      op1(SYSX)                       // SYS sleep 250ms
+      op2(LDAa, REG_OUTPUT_IDX)       // reload A
+      op2(SUAa, lbl(Blink))           // subtract blink mask
+      op2(SUXc, 1)                    // dec blink ctr
+      op2(0254, lbl(DoBlink))         // if 0 return 
+      op2(JMPu, lbl(BlinkLoop))
+
+    pc(0204)  // skip over the "flag" bytes
+
+    def(ScrollLeft)
+      op1(0300)                       // NOOP: space for the return addr
+      op2(STBa, lbl(Mins))            // B has mims
+      op2(LDXc, 8)
+    def(Left)
+      // scroll left
+      op2(LDAa, lbl(Display))
+      op1(0211) //left shift A 1
+      op2(STAa, lbl(Display))
+      op2(LDAa, lbl(Mins))
+      op1(0311) //left roll A 1
+      op2(STAa, lbl(Mins))
+      op2(ANDc, 0001)
+      op2(ADAa, lbl(Display))
+      op2(STAa, lbl(Display))
+      op2(STAa, REG_OUTPUT_IDX)
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 100)
+      op1(SYSX)    // SYS sleep
+      op2(SUXc, 1)
+      op2(0243, lbl(Left))
+      op2(0254, lbl(ScrollLeft)) // return to caller
+
+    def(Display)
+      equ(0000)
+    def(Mins)
+      equ(0000)
+    def(Hours)
+      equ(0000)
+    def(Blink)
+      equ(0000)
+  }  
+}
+
+or as raw bytes:
+0000,0000,0000,0004,0023,0377,0360,0272,0000,0300,0000,0023,0220,0123,0000,0360,
+0023,0002,0360,0134,0246,0134,0250,0023,0000,0034,0251,0363,0107,0023,0001,0360,
+0363,0204,0023,0200,0034,0251,0363,0107,0223,0010,0024,0246,0011,0034,0246,0024,
+0250,0111,0034,0250,0323,0100,0004,0246,0034,0246,0034,0200,0023,0222,0123,0144,
+0360,0213,0001,0243,0052,0343,0020,0300,0223,0005,0024,0246,0034,0200,0023,0222,
+0123,0372,0360,0360,0024,0200,0004,0251,0034,0200,0023,0222,0123,0372,0360,0360,
+0024,0200,0014,0251,0213,0001,0254,0107,0343,0114,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0300,0134,0247,0223,0010,0024,0246,0211,0034,0246,0024,0247,
+0311,0034,0247,0323,0001,0004,0246,0034,0246,0034,0200,0023,0222,0123,0144,0360,
+0213,0001,0243,0211,0254,0204,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+
+--- BCD 24-hour Version 2 of 2 ---
+Replace the method in Programs.cpp with this for 24-hour display with blinking RUN LED vs Bit7:
+
+void Programs::AssembleBCDClock(byte* pMem)  // 24-hour display version, blinks *control* LED
+{
+  enum { ShowHr, ScrollLeft, Left, Right, Display, Mins, Hours, BlinkAddr1, BlinkAddr2, DoBlink, BlinkLoop, BlinkLEDMaskMin, BlinkLEDMaskHr};
+  // see BlinkLEDMaskMin/BlinkLEDMaskHr data to configure blink patterns (blinking minutes, solid hours)
+  m_pMemory = pMem;
+  
+  for (m_iPass = 0; m_iPass < 2; m_iPass++)
+  {
+    pc(0)
+      equ(0000)
+      equ(0000)
+      equ(0000)
+      equ(0004)
+      // init
+      op2(LDAc, 0xFF)
+      op1(SYSX)                       // SYS got extensions?
+      op2(0272, REG_A_IDX)            // skip next two if A has b7 not set
+      op1(0300)                       // noop
+      op1(0000)                       // halt, no extensions
+      //op2(LDAc, 128 + Config::eControlLEDs)
+      //op2(LDBc, 0000)                 // LDB #0
+      //op1(SYSX)                       // SYS clear control LEDs
+    def(ShowHr)
+      op2(LDAc, Config::eClockHours24)
+      op1(SYSX)                       // SYS get hr-24 BCD (in B)
+      op2(STBa, lbl(Display))         // B has hour
+      op2(STBa, lbl(Hours))
+      op2(LDAc, lbl(BlinkLEDMaskHr))  // LDA addr of blink pair
+      op2(STAa, lbl(BlinkAddr1))      // save A (blink pair addr)
+      op2(0363, lbl(DoBlink))
+
+      op2(LDAc, Config::eClockMinutes)
+      op1(SYSX)                       // SYS get min BCD
+
+      op2(0363, lbl(ScrollLeft))
+
+      op2(LDAc, lbl(BlinkLEDMaskMin)) // LDA addr of blink pair
+      op2(STAa, lbl(BlinkAddr1))      // save A (blink pair addr)
+      op2(0363, lbl(DoBlink))
+
+      op2(LDXc, 8)
+    def(Right)
+      // scroll right
+      op2(LDAa, lbl(Display))
+      op1(0011) //right shift A 1
+      op2(STAa, lbl(Display))
+      op2(LDAa, lbl(Hours))
+      op1(0111) //right roll A 1
+      op2(STAa, lbl(Hours))
+      op2(ANDc, 0100)
+      op2(ADAa, lbl(Display))
+      op2(STAa, lbl(Display))
+      op2(STAa, REG_OUTPUT_IDX)
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 100)
+      op1(SYSX)    // SYS sleep
+      op2(SUXc, 1)
+      op2(0243, lbl(Right))
+
+      op2(JMPu, lbl(ShowHr))
+      
+    def(DoBlink)
+      op1(0300)                       // NOOP: space for the return addr
+      op2(LDXc, 5)                    // LDX with counter
+      op2(LDAa, lbl(Display))         // load (display)
+      op2(STAa, REG_OUTPUT_IDX)       // Show it (mins)
+      op2(LDAa, lbl(BlinkAddr1))      // load addr1
+      op2(ADAc, 1)                    // inc
+      op2(STAa, lbl(BlinkAddr2))      // store addr2
+    def(BlinkLoop)
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 250)                  // LDB #250
+      op1(SYSX)                       // SYS sleep 250ms
+      op1(SYSX)                       // SYS sleep 250ms
+      op2(LDAc, 128 + Config::eControlLEDs)
+      op2(0125, lbl(BlinkAddr1))      // LDB [ind] mask of ctrl led to blink (on)
+      op1(SYSX)                       // SYS set control LED
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 250)                  // LDB #250
+      op1(SYSX)                       // SYS sleep 250ms
+      op1(SYSX)                       // SYS sleep 250ms
+      op2(LDAc, 128 + Config::eControlLEDs)
+      op2(0125, lbl(BlinkAddr2))      // LDB [ind] mask of ctrl led to blink (off)
+      op1(SYSX)                       // SYS clear control LEDs
+      op2(SUXc, 1)                    // dec blink ctr
+      op2(0254, lbl(DoBlink))         // if 0 return 
+      op2(JMPu, lbl(BlinkLoop))
+
+    pc(0204)  // skip over the "flag" bytes
+
+    def(ScrollLeft)
+      op1(0300)                       // NOOP: space for the return addr
+      op2(STBa, lbl(Mins))            // B has mims
+      op2(LDXc, 8)
+      op2(LDAc, 128 + Config::eControlLEDs)
+      op2(LDBc, 0000)                 // LDB #0
+      op1(SYSX)                       // SYS clear control LEDs
+    def(Left)
+      // scroll left
+      op2(LDAa, lbl(Display))
+      op1(0211) //left shift A 1
+      op2(STAa, lbl(Display))
+      op2(LDAa, lbl(Mins))
+      op1(0311) //left roll A 1
+      op2(STAa, lbl(Mins))
+      op2(ANDc, 0001)
+      op2(ADAa, lbl(Display))
+      op2(STAa, lbl(Display))
+      op2(STAa, REG_OUTPUT_IDX)
+      op2(LDAc, 128 + Config::eControlDelayMilliSec)
+      op2(LDBc, 100)
+      op1(SYSX)    // SYS sleep
+      op2(SUXc, 1)
+      op2(0243, lbl(Left))
+      op2(0254, lbl(ScrollLeft)) // return to caller
+
+    def(Display)
+      equ(0000)
+    def(Mins)
+      equ(0000)
+    def(Hours)
+      equ(0000)
+    def(BlinkAddr1)
+      equ(0000)
+    def(BlinkAddr2)
+      equ(0000)
+    // ctrl LED to blink: bit 0/1/2/3 = CLR/ADDR/MEM/RUN
+    // upper 4 bits are RUN LED PWM, 0=max brightness
+    def(BlinkLEDMaskMin) // minutes: RUN on/off (blink)
+      equ(bit(3))
+      equ(0)
+    def(BlinkLEDMaskHr)  // hour: RUN on/on (solid)
+      equ(bit(3))
+      equ(bit(3))
+  }  
+}
+
+or as raw bytes:
+0000,0000,0000,0004,0023,0377,0360,0272,0000,0300,0000,0023,0002,0360,0134,0253,
+0134,0255,0023,0262,0034,0256,0363,0102,0023,0001,0360,0363,0204,0023,0260,0034,
+0256,0363,0102,0223,0010,0024,0253,0011,0034,0253,0024,0255,0111,0034,0255,0323,
+0100,0004,0253,0034,0253,0034,0200,0023,0222,0123,0144,0360,0213,0001,0243,0045,
+0343,0013,0300,0223,0005,0024,0253,0034,0200,0024,0256,0003,0001,0034,0257,0023,
+0222,0123,0372,0360,0360,0023,0220,0125,0256,0360,0023,0222,0123,0372,0360,0360,
+0023,0220,0125,0257,0360,0213,0001,0254,0102,0343,0117,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0300,0134,0254,0223,0010,0023,0220,0123,0000,0360,0024,0253,
+0211,0034,0253,0024,0254,0311,0034,0254,0323,0001,0004,0253,0034,0253,0034,0200,
+0023,0222,0123,0144,0360,0213,0001,0243,0216,0254,0204,0000,0000,0000,0000,0000,
+0010,0000,0010,0010,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,
+
+[Mark Wilson Feb 2020]
