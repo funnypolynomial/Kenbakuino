@@ -30,6 +30,9 @@ SYSX extensions to copy RAM to/from EEPROM. See memcopy.txt
 **Feb '20**
 By request, a couple of 24-hour mode versions of the BCD clock (STOP+Bit3). See 24hourBCDclocks.txt
 
+**Apr '21**
+Corrected CLR+STOR typo and SysInfo bug re delay set to 0ms.
+
 Schematic (taken from PINS.H)
 ````
 #ifndef pins_h

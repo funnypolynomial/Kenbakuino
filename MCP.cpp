@@ -26,7 +26,7 @@ bool ExtendedCPU::OnNOOPExtension(byte Op)
     {
       Write(REG_A_IDX, A);
       Write(REG_B_IDX, B);
-      config.SetCPUSpeed(0);
+      config.m_iCycleDelayMilliseconds = 0;
       return true;
     }
     else

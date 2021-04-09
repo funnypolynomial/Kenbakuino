@@ -215,7 +215,7 @@ some make more sense that others (for example Delay from the front panel).
 Extension #7 CPU Speed -------------------------------------------------------
 Pressing BitN+STOP sets the "CPU speed".  It sets the delay in milliseconds 
 added after each CPU cycle, equal to 2^N ms.  Thus b0+STOP sets the
-delay to 1ms.  b7+STOP sets it to 128ms.  The delay is set to 1 at power on
+delay to 1ms.  b7+STOP sets it to 128ms.  The delay is set to 0 at power on
 and on CLR+STOR (Extension #3 Erase above) or if a program executes the 
 SysInfo instruction, 0360.
 
