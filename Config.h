@@ -2,7 +2,7 @@
 #define config_h
 
 // Configuration settings and also "SysInfo"
-
+ 
 // auto-run flag bits:
 #define AUTO_RUN_BUILTIN 0b00010000
 #define AUTO_RUN_EEPROM  0b00100000
