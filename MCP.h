@@ -1,6 +1,6 @@
 #ifndef mcp_h
 #define mcp_h
-
+ 
 #include "CPU.h"
 
 // derived from the default KENBAK-1 cpu to over-ride NOOP
