@@ -15,6 +15,7 @@
 //  May 2019: Added Auto-run program at start-up
 //            Added Clock consts for no RTC or RTC with no SRAM
 //  Jun 2019: Added system extensions to read/write EEPROM
+//  May 2021: Fixed right-shift sign extension and issues with multi-bit roll instructions
 // ==================================================================
 
 // WTF.  We need to include these in the "main sketch" if we want to include them in "tabs"?
