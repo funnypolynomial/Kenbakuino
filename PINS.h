@@ -1,6 +1,6 @@
 #ifndef pins_h
 #define pins_h
-
+ 
 // Pin assignments
 // DS1307 - RTC (wire library)
 #define PIN_RTC_SDA	A4
