@@ -1,6 +1,6 @@
 #ifndef memory_h
 #define memory_h
-
+ 
 // handle EEPROM and PROGMEM
 class Memory
 {
