@@ -33,6 +33,11 @@ By request, a couple of 24-hour mode versions of the BCD clock (STOP+Bit3). See 
 **Apr '21**
 Corrected CLR+STOR typo and SysInfo bug re delay set to 0ms.
 
+**May '21**
+Fixed right-shift sign extension and issues with multi-bit roll instructions.
+
+**NOTE**: right-shift now preserves the "sign" as per original KENBAK-1. 0377 shifted right 1 is 0377!
+
 Schematic (taken from PINS.H)
 ````
 #ifndef pins_h
