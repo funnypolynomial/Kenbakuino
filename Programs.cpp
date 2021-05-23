@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Cpu.h"
 #include "Programs.h"
-
+ 
 // A really simple two-pass "assembler"
 
 #define pc(_a)      m_iIndex=_a;
