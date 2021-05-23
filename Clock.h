@@ -1,6 +1,7 @@
 #ifndef clock_h
 #define clock_h
 
+
 // interacts with the DS1307 RTC
 class Clock
 {
