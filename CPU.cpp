@@ -88,6 +88,9 @@ P--           -Q-         --R
 // define to revert to 0-fill right shift and incorrect rolls of more than 1 bit
 //#define CPU_LEGACY_SHIFT_ROLL
 
+// define to revert to PC updating during opcode evaluation (vs at the end)
+//#define CPU_LEGACY_PROGRAM_COUNTER
+
 CPU* CPU::cpu = NULL;
 
 CPU::CPU(void)
@@ -154,13 +157,20 @@ byte* CPU::Memory()
 byte* CPU::GetNextByte()
 {
   // note: doesn't do anything special if we wrap around.  We could HALT, but don't
+#ifdef CPU_LEGACY_PROGRAM_COUNTER  
   return m_Memory + m_Memory[REG_P_IDX]++;
+#else  
+  return m_Memory + m_Memory[REG_P_IDX] + m_InstructionBytes++;
+#endif
 }
 
 bool CPU::Step()
 {
   // one instruction, false means HALT
-  return Execute(*GetNextByte());
+  m_InstructionBytes = 0;
+  bool go = Execute(*GetNextByte());
+  m_Memory[REG_P_IDX] += m_InstructionBytes;  // if enabled, advance the PC at the *end* of the instruction
+  return go;
 }
 
 bool CPU::Execute(byte Instruction)
@@ -244,7 +254,11 @@ bool CPU::Execute(byte Instruction)
       else
         Skip = !(*Addr & Mask);
       if (Skip) // skip the next instruction (2 bytes)
+#ifdef CPU_LEGACY_PROGRAM_COUNTER
         m_Memory[REG_P_IDX] += 2;
+#else
+        m_InstructionBytes += 2;
+#endif
     }
     else  // SET
     {
@@ -279,10 +293,11 @@ bool CPU::Execute(byte Instruction)
     {
       if (JumpAndMark)
       {
-        m_Memory[TargetAddr] = m_Memory[REG_P_IDX];
+        m_Memory[TargetAddr] = m_Memory[REG_P_IDX] + m_InstructionBytes;
         TargetAddr++;
       }
       m_Memory[REG_P_IDX] = TargetAddr;
+      m_InstructionBytes = 0;
     }
   }
   else if (P__ == 3)  // ==================== Or, And, Lneg, Noop

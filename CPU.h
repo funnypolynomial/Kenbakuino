@@ -39,7 +39,7 @@ private:
   bool Execute(byte Instruction);
 
   byte m_Memory[256];
+  byte m_InstructionBytes = 0;
 };
 
 #endif
-
