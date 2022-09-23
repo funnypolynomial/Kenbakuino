@@ -38,6 +38,11 @@ Fixed right-shift sign extension and issues with multi-bit roll instructions.
 
 **NOTE**: right-shift now preserves the "sign" as per original KENBAK-1. 0377 shifted right 1 is 0377!
 
+**Sep '22**
+Fixed program counter increment to happen after instruction executed.
+
+**NOTE**: `.lbl LDA 003` now sets A to lbl rather than lbl+2
+
 Schematic (taken from PINS.H)
 ````
 #ifndef pins_h
