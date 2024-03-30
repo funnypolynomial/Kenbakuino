@@ -6,7 +6,7 @@
 #include <avr/pgmspace.h>
  
 #include "Memory.h"
-#include "Cpu.h"
+#include "CPU.h"
 #include "Programs.h"
 #include "Config.h"
 #include "Clock.h"
