@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "Config.h"
-#include "Cpu.h"
+#include "CPU.h"
 #include "Programs.h"
  
 // A really simple two-pass "assembler"
