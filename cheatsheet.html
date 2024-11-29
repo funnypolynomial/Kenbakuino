@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="utf-8" />
+		<title>
+		</title>
+		<style>
+			body { font-family:Calibri; font-size:12pt }
+			p { margin:0pt }
+@media (max-width: 900px) { 
+img { 
+   max-width: 100%;
+   height: auto;
+}
+
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+}	
+
+
+		</style>
+	</head>
+	<body>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><u><span style="font-family:'Courier New'; ">Addresses:</span></u></strong><strong><u><span style="font-family:'Courier New'; ">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span></u></strong><strong><u><span style="font-family:'Courier New'; ">Kenbak-uino</span></u></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0000=A, 0001=B, 0002=X, 0003=PC</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0200=Output</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0201, 0202 &amp; 0203=Flags A, B &amp; X, b1=Carry, b0=Overflow</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0377=Input</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><u><span style="font-family:'Courier New'; ">Op-codes: octal PQR</span></u></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">----Bit Test &amp; Manipulate----</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">P--</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">-Q-</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">--R</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0 = Set 0</span><span style="font-family:'Courier New'">&#xa0;&#xa0; </span><span style="font-family:'Courier New'">(bit number)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">1 = Set 1</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">2 = Skip 0</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">2</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">3 = Skip 1</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">----Shifts/Rotates---- (one byte)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">P--</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">-Q-</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">--R</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0 = Rt Shift</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">0/4=A/B:4</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">1 = Rt Rot</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">1/5=A/A:1</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">1</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">2 = Lt Shift</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">2/6=A/B:2</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">3 = Lt Rot</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">3/7=A/B:3 (bits)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">----Misc---- (one byte)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">P--</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">-Q-</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">--R</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0 = Halt</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">(don't care)</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">0</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">1 = Halt</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">2 = NOP</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">3 = NOP</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><strong><span style="font-family:'Courier New'; ">360 = System extension</span></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">----Jumps----</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">P--</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">-Q-</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">--R</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0 = A</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">1 = B</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">2 = X</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">3 = Unc</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">3 != 0</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">4 = JPD</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">4 == 0</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">5 = JPI</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">5 =&lt; 0</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">6 = JMD</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">6 &gt;= 0</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">7 = JMI</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">7 &gt; 0</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">----Or, And, LNeg----</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">P--</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">-Q-</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">--R</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">3</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">0 = Or</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">1 = (NOP)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">2 = And</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">3 - LNeg</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">(address mode)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">----Add, Sub, Load, Store----</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">P--</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">-Q-</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">--R</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0 = A</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">0 = Add</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">1 = B</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">1 = Sub</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">2 = X</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">2 = Load</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">3 = Store</span><span style="font-family:'Courier New'">&#xa0;&#xa0; </span><span style="font-family:'Courier New'">(address mode)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><u><span style="font-family:'Courier New'; ">Address modes; LDA b</span></u></strong><strong><u><span style="font-family:'Courier New'; ">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span></u></strong><strong><u><span style="font-family:'Courier New'; ">STA b</span></u></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">3 Const:</span><span style="font-family:'Courier New'">&#xa0;&#xa0; </span><span style="font-family:'Courier New'">A=b</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">Immed:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">(over-write b)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">4 Mem:</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">A=[b]</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">[b]=A</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">5 Ind:</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">A=[[b]]</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">Defer:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">[[b]]=A</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">6 Idx:</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">A=[b + X]</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">[b + X]=A</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">7 Ind/Idx: A=[[b] + X]</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">[[b] + X]=A</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">Bit Test &amp; Manipulate op-codes are only Mem mode.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><u><span style="font-family:'Courier New'; ">Jump Modes; jmp b</span></u></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">4 jmp direct:</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">PC=[b]</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">5 jmp indirect:</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">PC=[[b]]</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">6 jmp direct &amp; mark:</span><span style="font-family:'Courier New'">&#xa0;&#xa0; </span><span style="font-family:'Courier New'">[b]=PC+2, PC=[b]+1</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">7 jmp indirect &amp; mark: [[b]]=PC+2, PC=[[b]]+1</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><u><span style="font-family:'Courier New'; ">System Extension ("NOOP" 0360)</span></u></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">Index in A, b7 clear = read into B, b7 set = write to B</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">A=</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">000..007 : DS1307 RTC registers;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">sec,min,hr-24,day,date,month,year,ctrl (BCD).</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">010 : Flags;</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">b0 set = buttons toggle bits.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">011: EEPROM Page Map.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">012..016: User data.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">017: Control auto-run (see Buttons at Power On).</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">020: Control LEDs; Read N/A. </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Write b0:INP,b1:ADDR,b2:MEM,b3:RUN,b4-b7=~PWM.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">021: Random; Read 0..255, write &lt;seed&gt; or 0.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">022: Sleep; Read N/A. Write=delay in ms.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">023: Serial byte; @38400baud.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">0177: Extensions enabled; Reading sets A=0 </span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><u><span style="font-family:'Courier New'; ">Buttons</span></u></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP+CLR: All LEDs off.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">CLR+STOR: Zero memory, PC=004, address=004, reset speed.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP+BitN: Loads pre-defined program:</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">0:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Simple counter</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">1:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Pattern</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">2:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Counting Clock</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">3:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">BCD Clock</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">4:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Binary Clock</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">5:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Das Blinken Lights</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">6:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Sieve of Eratosthenes</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">7:</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Set RTC (A=HH, B=MM)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">BitN+STOR: Write memory to EEPROM page N.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">BitN+READ: Reads memory from EEPROM page N.</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Default pages</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">0,1: 256; 2,3: 128; 4,5,67: 64</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP+READ: System Extension read.</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Index is address, result in Output.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP+STOR: System Extension write.</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Index is address, value from Input.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">BitN+STOP: Set CPU speed.</span><span style="font-family:'Courier New'">&#xa0; </span><span style="font-family:'Courier New'">Cycle delay=2^N ms.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">BitN+DISP/SET: Send/receive program memory at baud N (0/1/2/3=4800/9600/19k2/38k4)</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<strong><span style="font-family:'Courier New'; ">Buttons at Power On</span></strong>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP &amp; BitN: auto-run built-in program N.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">READ &amp; BitN: auto-run from EEPROM slot N.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP</span><span style="font-family:'Courier New'">&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </span><span style="font-family:'Courier New'">: turn auto-run off.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">STOP &amp; CLR : reset configuration to defaults.</span>
+			</p>
+			<p style="widows:0; orphans:0; font-size:6pt">
+				<span style="font-family:'Courier New'">&#xa0;</span>
+			</p>
+</body>
+</html>

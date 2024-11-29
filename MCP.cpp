@@ -6,7 +6,10 @@
 #include "CPU.h"
 #include "Memory.h"
 #include "MCP.h"
- 
+
+// define to revert to RUN LED not turned off when HALT encountered or STOP pressed
+//#define MCP_LEGACY_RUN_LED 
+
 void ExtendedCPU::Init()
 {
   CPU::Init();
@@ -109,6 +112,10 @@ void MCP::Loop()
     {
       m_bRunning = CPU::cpu->Step();
       m_Data = CPU::cpu->Read(REG_OUTPUT_IDX);
+#ifndef MCP_LEGACY_RUN_LED 
+      if (!m_bRunning)
+        SetMode(eNone); // Turn off Run when HALTed
+#endif        
       // slow things down...
       if (config.m_iCycleDelayMilliseconds)
       {
@@ -403,7 +410,11 @@ void MCP::OnRunStop(byte Chord)
     Blink(eRun);
   }
   m_bRunning = false;
+#ifdef MCP_LEGACY_RUN_LED 
   SetMode(eRun);
+#else  
+  SetMode(eNone);
+#endif  
 }
 
 bool MCP::NOOPExtensionCallback(void* pThis, byte Op)
@@ -587,4 +598,3 @@ void MCP::AutoRun(byte Auto)
 
 
 MCP mcp = MCP();
-

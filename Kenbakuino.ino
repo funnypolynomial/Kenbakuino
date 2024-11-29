@@ -17,6 +17,7 @@
 //  Jun 2019: Added system extensions to read/write EEPROM
 //  May 2021: Fixed right-shift sign extension and issues with multi-bit roll instructions (see CPU_LEGACY_SHIFT_ROLL)
 //  Sep 2022: Fixed program counter increment to happen after instruction executed (see CPU_LEGACY_PROGRAM_COUNTER)
+//  Nov 2024: Turn RUN LED off when HALT encountered or STOP pressed (see MCP_LEGACY_RUN_LED)
 // ==================================================================
 
 // WTF.  We need to include these in the "main sketch" if we want to include them in "tabs"?
