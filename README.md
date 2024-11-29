@@ -43,6 +43,9 @@ Fixed program counter increment to happen after instruction executed.
 
 **NOTE**: `.lbl LDA 003` now sets A to lbl rather than lbl+2
 
+**Nov '24**
+Turn RUN LED off when HALT encountered or STOP pressed (see MCP_LEGACY_RUN_LED).
+
 Schematic (taken from PINS.H)
 ````
 #ifndef pins_h
