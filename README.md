@@ -75,7 +75,7 @@ Schematic (taken from PINS.H)
 #define	PIN_LED_MEM	A3
 #define PIN_LED_RUN_PWM	11
 
-/*********************************************************/*********************************************************
+/*********************************************************
 This is a *SCHEMATIC*
 Pins not listed are unused/floating.
 Component list: 
