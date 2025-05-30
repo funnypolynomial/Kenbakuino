@@ -24,9 +24,9 @@ void LEDs::Init()
 void LEDs::ShiftOut(byte LEDs)
 {
   digitalWrite(PIN_LEDS_ST, LOW);
-  // shift out the bits:
-  shiftOut(PIN_LEDS_DS, PIN_LEDS_SH, LSBFIRST, LEDs);  
-  //take the latch pin high so the LEDs will light up:
+  // shift out the bits to the 595:
+  shiftOut(PIN_LEDS_DS, PIN_LEDS_SH, LSBFIRST, LEDs);  // LSBFIRST because Q0 == Bit7
+  // take the latch pin high so the LEDs will light up:
   digitalWrite(PIN_LEDS_ST, HIGH);
 }
 
@@ -69,4 +69,3 @@ byte LEDs::m_pDirectControlPins[] =
 };
 
 LEDs leds = LEDs();
-
